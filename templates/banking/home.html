@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}EcoFin Banking - Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-4">Welcome, {{ user.get_full_name|default:user.email }}</h1>
+    </div>
+</div>
+
+<!-- Account Summary -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Account Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="text-primary mb-3">{{ total_balance|floatformat:2 }}</h2>
+                        <p class="text-muted">Total Balance Across All Accounts</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="{% url 'banking:account_list' %}" class="btn btn-primary">View All Accounts</a>
+                        <a href="{% url 'banking:account_create' %}" class="btn btn-outline-primary">Open New Account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accounts and Recent Transactions -->
+<div class="row">
+    <!-- Accounts -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Your Accounts</h5>
+                <a href="{% url 'banking:account_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body">
+                {% if accounts %}
+                    <div class="list-group">
+                        {% for account in accounts %}
+                            <a href="{% url 'banking:account_detail' account_number=account.account_number %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ account.nickname|default:account.account_type.name }}</h6>
+                                    <span class="text-primary">{{ account.balance|floatformat:2 }} {{ account.currency }}</span>
+                                </div>
+                                <small class="text-muted">Account #: {{ account.account_number }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p>You don't have any accounts yet.</p>
+                        <a href="{% url 'banking:account_create' %}" class="btn btn-primary">Open Your First Account</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Transactions</h5>
+                <a href="{% url 'banking:transaction_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_transactions %}
+                    <div class="list-group">
+                        {% for transaction in recent_transactions %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">
+                                        {% if transaction.transaction_type == 'deposit' %}
+                                            <i class="fas fa-arrow-down text-success me-2"></i>
+                                        {% elif transaction.transaction_type == 'withdrawal' %}
+                                            <i class="fas fa-arrow-up text-danger me-2"></i>
+                                        {% elif transaction.transaction_type == 'transfer_in' %}
+                                            <i class="fas fa-exchange-alt text-success me-2"></i>
+                                        {% elif transaction.transaction_type == 'transfer_out' %}
+                                            <i class="fas fa-exchange-alt text-danger me-2"></i>
+                                        {% else %}
+                                            <i class="fas fa-circle text-secondary me-2"></i>
+                                        {% endif %}
+                                        {{ transaction.get_transaction_type_display }}
+                                    </h6>
+                                    <span class="
+                                        {% if transaction.transaction_type == 'deposit' or transaction.transaction_type == 'transfer_in' %}
+                                            text-success
+                                        {% elif transaction.transaction_type == 'withdrawal' or transaction.transaction_type == 'transfer_out' %}
+                                            text-danger
+                                        {% else %}
+                                            text-secondary
+                                        {% endif %}
+                                    ">
+                                        {% if transaction.transaction_type == 'deposit' or transaction.transaction_type == 'transfer_in' %}
+                                            +
+                                        {% elif transaction.transaction_type == 'withdrawal' or transaction.transaction_type == 'transfer_out' %}
+                                            -
+                                        {% endif %}
+                                        {{ transaction.amount|floatformat:2 }}
+                                    </span>
+                                </div>
+                                <p class="mb-1">{{ transaction.description }}</p>
+                                <small class="text-muted">
+                                    {{ transaction.created_at|date:"M d, Y H:i" }} •
+                                    Account: {{ transaction.account.account_number }}
+                                </small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p>No recent transactions.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    {% if accounts.exists %}
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'banking:account_deposit' account_number=accounts.0.account_number %}" class="text-decoration-none">
+                                <div class="p-3 rounded bg-light">
+                                    <i class="fas fa-arrow-down text-success fa-2x mb-2"></i>
+                                    <h5>Deposit</h5>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'banking:account_withdraw' account_number=accounts.0.account_number %}" class="text-decoration-none">
+                                <div class="p-3 rounded bg-light">
+                                    <i class="fas fa-arrow-up text-danger fa-2x mb-2"></i>
+                                    <h5>Withdraw</h5>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'banking:account_transfer' account_number=accounts.0.account_number %}" class="text-decoration-none">
+                                <div class="p-3 rounded bg-light">
+                                    <i class="fas fa-exchange-alt text-primary fa-2x mb-2"></i>
+                                    <h5>Transfer</h5>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'banking:account_statement' account_number=accounts.0.account_number %}" class="text-decoration-none">
+                                <div class="p-3 rounded bg-light">
+                                    <i class="fas fa-file-alt text-secondary fa-2x mb-2"></i>
+                                    <h5>Statement</h5>
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <p>Open an account to access quick actions.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

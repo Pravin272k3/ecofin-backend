@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Statement - EcoFin Banking{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'banking:home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'banking:account_list' %}">Accounts</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'banking:account_detail' account_number=account.account_number %}">{{ account.nickname|default:account.account_type.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Statement</li>
+            </ol>
+        </nav>
+        <h1>Account Statement</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'banking:account_statement' account_number=account.account_number %}?start_date={{ start_date|date:'Y-m-d' }}&end_date={{ end_date|date:'Y-m-d' }}&format=csv" class="btn btn-outline-primary">
+            <i class="fas fa-download me-2"></i>Download CSV
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Statement Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Account:</strong> {{ account.nickname|default:account.account_type.name }}</p>
+                        <p><strong>Account Number:</strong> {{ account.account_number }}</p>
+                        <p><strong>Account Type:</strong> {{ account.account_type.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Statement Period:</strong> {{ start_date|date:"M d, Y" }} to {{ end_date|date:"M d, Y" }}</p>
+                        <p><strong>Opening Balance:</strong> {{ opening_balance|floatformat:2 }} {{ account.currency }}</p>
+                        <p><strong>Closing Balance:</strong> {{ closing_balance|floatformat:2 }} {{ account.currency }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Filter Statement</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Transaction History</h5>
+            </div>
+            <div class="card-body">
+                {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Reference</th>
+                                    <th>Type</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                    <tr>
+                                        <td>{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>{{ transaction.description }}</td>
+                                        <td>{{ transaction.reference_number|truncatechars:8 }}</td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'deposit' %}
+                                                <span class="badge bg-success">Deposit</span>
+                                            {% elif transaction.transaction_type == 'withdrawal' %}
+                                                <span class="badge bg-danger">Withdrawal</span>
+                                            {% elif transaction.transaction_type == 'transfer_in' %}
+                                                <span class="badge bg-info">Transfer In</span>
+                                            {% elif transaction.transaction_type == 'transfer_out' %}
+                                                <span class="badge bg-warning">Transfer Out</span>
+                                            {% elif transaction.transaction_type == 'interest' %}
+                                                <span class="badge bg-primary">Interest</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ transaction.get_transaction_type_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end {% if transaction.transaction_type in 'deposit,transfer_in,interest' %}text-success{% elif transaction.transaction_type in 'withdrawal,transfer_out,fee' %}text-danger{% endif %}">
+                                            {% if transaction.transaction_type in 'deposit,transfer_in,interest' %}+{% elif transaction.transaction_type in 'withdrawal,transfer_out,fee' %}-{% endif %}
+                                            {{ transaction.amount|floatformat:2 }}
+                                        </td>
+                                        <td class="text-end">{{ transaction.balance_after|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p>No transactions found for the selected period.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Deposits</h6>
+                        <p class="text-success">
+                            {% with deposits=transactions|dictsortreversed:"created_at"|dictsort:"transaction_type"|selectattr:"transaction_type,in_list,deposit,transfer_in,interest"|list %}
+                                +{{ deposits|sum:"amount"|default:"0.00"|floatformat:2 }} {{ account.currency }}
+                            {% endwith %}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Withdrawals</h6>
+                        <p class="text-danger">
+                            {% with withdrawals=transactions|dictsortreversed:"created_at"|dictsort:"transaction_type"|selectattr:"transaction_type,in_list,withdrawal,transfer_out,fee"|list %}
+                                -{{ withdrawals|sum:"amount"|default:"0.00"|floatformat:2 }} {{ account.currency }}
+                            {% endwith %}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Net Change</h6>
+                        <p class="{% if closing_balance > opening_balance %}text-success{% elif closing_balance < opening_balance %}text-danger{% endif %}">
+                            {% with net_change=closing_balance|sub:opening_balance %}
+                                {% if net_change > 0 %}+{% elif net_change < 0 %}-{% endif %}
+                                {{ net_change|abs|floatformat:2 }} {{ account.currency }}
+                            {% endwith %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Custom template filters for the summary section
+    // These would normally be implemented as Django template filters
+    // For demonstration purposes, we're using JavaScript as a workaround
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // This is just a placeholder since the template filters would handle this server-side
+        console.log('Statement page loaded');
+    });
+</script>
+{% endblock %}

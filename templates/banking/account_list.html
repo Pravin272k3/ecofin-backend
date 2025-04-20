@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Accounts - EcoFin Banking{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Your Accounts</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'banking:account_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Open New Account
+        </a>
+    </div>
+</div>
+
+<!-- Account Summary -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Account Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="text-primary mb-3">{{ total_balance|floatformat:2 }}</h2>
+                        <p class="text-muted">Total Balance Across All Accounts</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end align-items-center h-100">
+                            <div class="text-end">
+                                <p class="mb-0"><strong>{{ accounts.count }}</strong> Active Accounts</p>
+                                <p class="text-muted">Last updated: {% now "F j, Y H:i" %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accounts List -->
+<div class="row">
+    {% if accounts %}
+        {% for account in accounts %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ account.nickname|default:account.account_type.name }}</h5>
+                        <span class="badge {% if account.status == 'active' %}bg-success{% elif account.status == 'inactive' %}bg-warning{% elif account.status == 'frozen' %}bg-info{% else %}bg-danger{% endif %}">
+                            {{ account.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Account Number</p>
+                                <p class="mb-0">{{ account.account_number }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Account Type</p>
+                                <p class="mb-0">{{ account.account_type.name }}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Currency</p>
+                                <p class="mb-0">{{ account.currency }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Opened On</p>
+                                <p class="mb-0">{{ account.created_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="text-muted mb-1">Current Balance</p>
+                                <h3 class="text-primary">{{ account.balance|floatformat:2 }} {{ account.currency }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'banking:account_detail' account_number=account.account_number %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i> View Details
+                            </a>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="accountActions{{ account.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Actions
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountActions{{ account.id }}">
+                                    <li><a class="dropdown-item" href="{% url 'banking:account_deposit' account_number=account.account_number %}">
+                                        <i class="fas fa-arrow-down text-success me-2"></i> Deposit
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'banking:account_withdraw' account_number=account.account_number %}">
+                                        <i class="fas fa-arrow-up text-danger me-2"></i> Withdraw
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'banking:account_transfer' account_number=account.account_number %}">
+                                        <i class="fas fa-exchange-alt text-primary me-2"></i> Transfer
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'banking:account_statement' account_number=account.account_number %}">
+                                        <i class="fas fa-file-alt me-2"></i> Statement
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-university fa-4x text-muted mb-3"></i>
+                    <h3>No Accounts Yet</h3>
+                    <p class="mb-4">You don't have any bank accounts. Get started by opening your first account.</p>
+                    <a href="{% url 'banking:account_create' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Open Your First Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

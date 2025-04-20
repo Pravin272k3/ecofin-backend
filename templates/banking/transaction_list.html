@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions - EcoFin Banking{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1>Transaction History</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Filter Transactions</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="account" class="form-label">Account</label>
+                        <select class="form-select" id="account" name="account">
+                            <option value="">All Accounts</option>
+                            {% for account in accounts %}
+                                <option value="{{ account.account_number }}" {% if request.GET.account == account.account_number %}selected{% endif %}>
+                                    {{ account.nickname|default:account.account_type.name }} ({{ account.account_number }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="type" class="form-label">Transaction Type</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="">All Types</option>
+                            {% for type_code, type_name in transaction_types.items %}
+                                <option value="{{ type_code }}" {% if request.GET.type == type_code %}selected{% endif %}>
+                                    {{ type_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request.GET.end_date }}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Transactions</h5>
+            </div>
+            <div class="card-body">
+                {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Account</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                    <tr>
+                                        <td>{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            <a href="{% url 'banking:account_detail' account_number=transaction.account.account_number %}">
+                                                {{ transaction.account.nickname|default:transaction.account.account_type.name }}
+                                            </a>
+                                            <br>
+                                            <small class="text-muted">{{ transaction.account.account_number }}</small>
+                                        </td>
+                                        <td>{{ transaction.description }}</td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'deposit' %}
+                                                <span class="badge bg-success">Deposit</span>
+                                            {% elif transaction.transaction_type == 'withdrawal' %}
+                                                <span class="badge bg-danger">Withdrawal</span>
+                                            {% elif transaction.transaction_type == 'transfer_in' %}
+                                                <span class="badge bg-info">Transfer In</span>
+                                            {% elif transaction.transaction_type == 'transfer_out' %}
+                                                <span class="badge bg-warning">Transfer Out</span>
+                                            {% elif transaction.transaction_type == 'interest' %}
+                                                <span class="badge bg-primary">Interest</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ transaction.get_transaction_type_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end {% if transaction.transaction_type in 'deposit,transfer_in,interest' %}text-success{% elif transaction.transaction_type in 'withdrawal,transfer_out,fee' %}text-danger{% endif %}">
+                                            {% if transaction.transaction_type in 'deposit,transfer_in,interest' %}+{% elif transaction.transaction_type in 'withdrawal,transfer_out,fee' %}-{% endif %}
+                                            {{ transaction.amount|floatformat:2 }}
+                                        </td>
+                                        <td class="text-end">{{ transaction.balance_after|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p>No transactions found matching your criteria.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

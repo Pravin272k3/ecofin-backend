@@ -1,0 +1,236 @@
+[
+  {
+    "model": "transactions.category",
+    "pk": 1,
+    "fields": {
+      "name": "Salary",
+      "category_type": "income",
+      "icon": "money-bill-wave",
+      "color": "#28a745",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 2,
+    "fields": {
+      "name": "Bonus",
+      "category_type": "income",
+      "icon": "gift",
+      "color": "#17a2b8",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 3,
+    "fields": {
+      "name": "Interest",
+      "category_type": "income",
+      "icon": "percentage",
+      "color": "#20c997",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 4,
+    "fields": {
+      "name": "Groceries",
+      "category_type": "expense",
+      "icon": "shopping-cart",
+      "color": "#dc3545",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 5,
+    "fields": {
+      "name": "Dining Out",
+      "category_type": "expense",
+      "icon": "utensils",
+      "color": "#fd7e14",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 6,
+    "fields": {
+      "name": "Transportation",
+      "category_type": "expense",
+      "icon": "car",
+      "color": "#6c757d",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 7,
+    "fields": {
+      "name": "Housing",
+      "category_type": "expense",
+      "icon": "home",
+      "color": "#6610f2",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 8,
+    "fields": {
+      "name": "Utilities",
+      "category_type": "expense",
+      "icon": "bolt",
+      "color": "#007bff",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 9,
+    "fields": {
+      "name": "Entertainment",
+      "category_type": "expense",
+      "icon": "film",
+      "color": "#e83e8c",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 10,
+    "fields": {
+      "name": "Healthcare",
+      "category_type": "expense",
+      "icon": "medkit",
+      "color": "#dc3545",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 11,
+    "fields": {
+      "name": "Education",
+      "category_type": "expense",
+      "icon": "graduation-cap",
+      "color": "#6f42c1",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 12,
+    "fields": {
+      "name": "Shopping",
+      "category_type": "expense",
+      "icon": "shopping-bag",
+      "color": "#fd7e14",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 13,
+    "fields": {
+      "name": "Personal Care",
+      "category_type": "expense",
+      "icon": "spa",
+      "color": "#e83e8c",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 14,
+    "fields": {
+      "name": "Travel",
+      "category_type": "expense",
+      "icon": "plane",
+      "color": "#17a2b8",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 15,
+    "fields": {
+      "name": "Gifts & Donations",
+      "category_type": "expense",
+      "icon": "gift",
+      "color": "#20c997",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 16,
+    "fields": {
+      "name": "Transfer",
+      "category_type": "transfer",
+      "icon": "exchange-alt",
+      "color": "#007bff",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 17,
+    "fields": {
+      "name": "Investments",
+      "category_type": "investment",
+      "icon": "chart-line",
+      "color": "#28a745",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 18,
+    "fields": {
+      "name": "Retirement",
+      "category_type": "investment",
+      "icon": "piggy-bank",
+      "color": "#6f42c1",
+      "user": null,
+      "is_system": true,
+      "parent": null
+    }
+  }
+]
