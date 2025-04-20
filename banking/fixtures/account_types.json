@@ -1,0 +1,57 @@
+[
+  {
+    "model": "banking.accounttype",
+    "pk": 1,
+    "fields": {
+      "name": "Checking Account",
+      "description": "A standard checking account for everyday transactions with no minimum balance requirement.",
+      "interest_rate": "0.01",
+      "minimum_balance": "0.00",
+      "maintenance_fee": "0.00"
+    }
+  },
+  {
+    "model": "banking.accounttype",
+    "pk": 2,
+    "fields": {
+      "name": "Savings Account",
+      "description": "A savings account that earns interest on your deposits, perfect for building your emergency fund or saving for short-term goals.",
+      "interest_rate": "0.50",
+      "minimum_balance": "100.00",
+      "maintenance_fee": "5.00"
+    }
+  },
+  {
+    "model": "banking.accounttype",
+    "pk": 3,
+    "fields": {
+      "name": "High-Yield Savings",
+      "description": "A premium savings account with a higher interest rate for those who maintain a larger balance.",
+      "interest_rate": "1.25",
+      "minimum_balance": "1000.00",
+      "maintenance_fee": "0.00"
+    }
+  },
+  {
+    "model": "banking.accounttype",
+    "pk": 4,
+    "fields": {
+      "name": "Money Market Account",
+      "description": "A high-interest account that combines features of checking and savings accounts with limited transactions.",
+      "interest_rate": "0.85",
+      "minimum_balance": "2500.00",
+      "maintenance_fee": "10.00"
+    }
+  },
+  {
+    "model": "banking.accounttype",
+    "pk": 5,
+    "fields": {
+      "name": "Student Account",
+      "description": "A no-fee checking account designed specifically for students with special benefits and no minimum balance.",
+      "interest_rate": "0.05",
+      "minimum_balance": "0.00",
+      "maintenance_fee": "0.00"
+    }
+  }
+]
