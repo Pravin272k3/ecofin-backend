@@ -1,0 +1,43 @@
+# Django and core dependencies
+Django==5.2
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# JWT Authentication
+djangorestframework-simplejwt==5.3.1
+PyJWT==2.8.0
+
+# Database
+# If you plan to use PostgreSQL in production, uncomment the following line
+# psycopg2-binary==2.9.9
+
+# Image processing (for profile pictures)
+Pillow==10.2.0
+
+# Date and time utilities
+python-dateutil==2.8.2
+
+# Environment variables management
+python-dotenv==1.0.1
+
+# Development tools
+django-debug-toolbar==4.3.0
+
+# Production server
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Security
+django-csp==3.7
+django-permissions-policy==4.18.0
+
+# API documentation
+drf-yasg==1.21.7
+
+# Testing
+pytest==7.4.4
+pytest-django==4.7.0
+coverage==7.4.1
+
+# Utilities
+six==1.16.0
